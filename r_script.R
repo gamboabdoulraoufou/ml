@@ -12,7 +12,7 @@ test <- read.csv("pml-testing.csv", sep=",")
 
 # Select predictors
 training <- training[,7:160]
-test <- test[,7:160]
+test <- test[,7:159]
 
 # Remove predictors that have most NA values
 v <- apply(!is.na(training),2,sum)>19621
@@ -20,7 +20,7 @@ training <- training[,v]
 test <- test[,v]
 
 # Sample
-inTrain <- createDataPartition(y=training$classe,p=0,6,list=FALSE)
+inTrain <- createDataPartition(y=training$classe,p=0.6,list=FALSE)
 training_train <- training[inTrain, ]
 training_test <- training[-inTrain, ]
 
