@@ -12,7 +12,7 @@ test <- read.csv("pml-testing.csv", sep=",")
 
 # Select predictors
 training <- training[,7:160]
-test <- test[,7:159]
+test <- test[,7:160]
 
 # Remove predictors that have most NA values
 v <- apply(!is.na(training),2,sum)>19621
@@ -27,15 +27,16 @@ training_test <- training[-inTrain, ]
 # Modeling
 model <- train(classe ~., data=training_train, metho="rf", prox=TRUE)
 
-# Validation on test sample
+# Validate model on test sample
 pred <- predict(model, training_test)
 table(pred,training_test$classe)
 
-# Print and cross validation accuracy
+# Print cross validation and accuracy
 print(model)
 print(model$finalModel)
 
 # prediction on test data
+test <- test[,1:84]
 prediction <- predict(model, test)
 table(prediction$classe)
 
