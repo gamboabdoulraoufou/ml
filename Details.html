@@ -15,14 +15,50 @@
 
 		<h4>Data Source</h4>
 		<p>The data for this project come from this source: http://groupware.les.inf.puc-rio.br/har.</p>
+			
+			# Import libraries
+			require(caret)
+			require(ggplot2)
+			require(randomForest)
+			# Load data
+			
+			training <- read.csv("pml-training.csv", sep=",")
+			test <- read.csv("pml-testing.csv", sep=",")
 
 		<h4>Modeling</h4>
+			<p>Cleaning data</p>
+			# Select predictors
+			training <- training[,7:160]
+			test <- test[,7:160]
+			# Remove predictors that have most NA values
+			v <- apply(!is.na(training),2,sum)>19621
+			training <- training[,v]
+			test <- test[,v]
+        		<p>Sampling</p>
+        		# Sample
+			inTrain <- createDataPartition(y=training$classe,p=0.6,list=FALSE)
+			training_train <- training[inTrain, ]
+			training_test <- training[-inTrain, ]
+			
 		<p>After sampling thetraining sample in two sample (training_train and training_test), I built a 
 		model on the training_train and I validate this modele on my training_test sample .</p>
-		<h5>build model</h5>
-		<p>To build my model I used the random forest .</p>
-		<h5>validate model</h5>
+		
+		<h5>build model with random forest algorithm</h5>
+			# Modeling
+			model <- train(classe ~., data=training_train, metho="rf", prox=TRUE)
+		<h(>Validate model</h5>
+			# Validate model on test sample
+			pred <- predict(model, training_test)
+			table(pred,training_test$classe)
+			# Print cross validation and accuracy
+			print(model)
+			print(model$finalModel)
+			
 		<h5>Focast</h5>
 		<p>After validation stape, i use my model to forcast news values</p>
+			# prediction on test data
+			test <- test[,1:84]
+			prediction <- predict(model, test)
+			table(prediction$classe)
 	</body>
 </html>
